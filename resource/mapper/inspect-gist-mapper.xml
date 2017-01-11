@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huayi.app.mapper.InspectGistMapper">
+    <select id="list" resultType="inspectGist">
+        SELECT
+          i.gist_id gistId,
+          i.gist_name gistName,
+          i.t_head_type tHeadType
+        FROM t_inspect_gist i
+    </select>
+    <resultMap id="detailMap" type="inspectGist">
+        <collection property="inspectItems" column="gistId" ofType="inspectItemVo" select="selectInspectItem"/>
+    </resultMap>
+    <resultMap id="itemMap" type="inspectItemDetailVo">
+        <association property="inspectResult" column="itemId" javaType="inspectResult"  select="inspectResultSelect" />
+    </resultMap>
+    <select id="inspectResultSelect" resultType="inspectResult">
+        SELECT
+        r.result_id resultId,
+        r.result_type resultType,
+        r.result_template resultTemplate
+        FROM
+        t_inspect_result r
+        WHERE
+        r.result_id=#{itemId}
+    </select>
+    <select id="selectInspectItem" resultMap="itemMap" >
+        SELECT
+        i.item_id itemId,
+        i.item_content itemContent,
+        i.parent_id parentId,
+        i.item_number itemNumber,
+        i.has_child hasChild,
+        i.assure assure,
+        i.inspect_method inspectMethod
+        FROM t_inspect_item i
+        WHERE i.gist_id=#{gistId}
+    </select>
+    <select id="find" parameterType="inspectGistFindQuery" resultMap="detailMap">
+        select
+          i.gist_id gistId,
+          i.gist_name gistName,
+          i.t_head_type tHeadType
+        FROM t_inspect_gist i
+        WHERE i.gist_id=#{gistId}
+    </select>
+</mapper>

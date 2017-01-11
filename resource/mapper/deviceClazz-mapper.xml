@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huayi.app.mapper.DeviceClazzMapper">
+    <select id="list" resultType="deviceClazz">
+        SELECT
+          d.clazz_id clazzId,
+          d.clazz_name clazzName,
+          d.clazz_acronym clazzAcronym,
+          d.remark remark
+        FROM t_device_clazz d
+    </select>
+
+</mapper>

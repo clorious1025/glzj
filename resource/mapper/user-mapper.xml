@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huayi.app.mapper.UserMapper">
+    <sql id="pageSql">
+        <bind name="first" value="(page - 1) * size"/>
+        limit #{first},#{size}
+    </sql>
+    <resultMap id="userMap" type="user">
+        <association property="role" column="role_id" select="selectRole"/>
+    </resultMap>
+    <select id="selectRole" resultType="role">
+        SELECT
+        *
+        FROM t_role
+        WHERE role_id=#{role_id}
+    </select>
+    <select id="login" parameterType="user" resultMap="userMap" >
+        SELECT
+        u.user_id userId,
+        u.id_card idCard,
+        u.user_nick_name userNickName,
+        u.user_real_name userRealName,
+        u.phone phone,
+        u.company_name companyName,
+        u.company_address companyAddress,
+        u.role_id,
+        u.register_time registerTime,
+        u.last_login_time lastLoginTime,
+        u.head_img_url headImgUrl,
+        u.id_card_front_img_url idCardFrontImgUrl,
+        u.id_card_back_img_url idCardBackImgUrl,
+        u.company_license_img_url companyLicenseImgUrl
+        FROM t_user u
+        WHERE u.phone=#{phone}
+        AND u.password=#{password}
+    </select>
+    <select id="find" parameterType="userFindQuery" resultType="user" >
+        SELECT
+        u.user_id userId,
+        u.id_card idCard,
+        u.user_nick_name userNickName,
+        u.user_real_name userRealName,
+        u.phone phone,
+        u.company_name companyName,
+        u.company_address companyAddress,
+        u.register_time registerTime,
+        u.last_login_time lastLoginTime,
+        u.head_img_url headImgUrl,
+        u.id_card_front_img_url idCardFrontImgUrl,
+        u.id_card_back_img_url idCardBackImgUrl,
+        u.company_license_img_url companyLicenseImgUrl
+        FROM t_user u
+        <where>
+            1=1
+            <if test="userId!=null">AND u.user_id=#{userId}</if>
+            <if test="phone!=null">AND u.phone=#{phone}</if>
+            <if test="password!=null">AND u.password=#{password}</if>
+        </where>
+    </select>
+    <update id="update" parameterType="user" >
+        UPDATE t_user i
+        <set>
+            <if test="idCard!=null">i.id_card=#{idCard},</if>
+            <if test="headImgUrl!=null">i.head_img_url=#{headImgUrl},</if>
+            <if test="userNickName!=null">i.user_nick_name=#{userNickName},</if>
+            <if test="userRealName!=null">i.user_real_name=#{userRealName},</if>
+            <if test="password!=null">i.password=#{password},</if>
+            <if test="phone!=null">i.phone=#{phone},</if>
+            <if test="companyName!=null">i.company_name=#{companyName},</if>
+            <if test="companyAddress!=null">i.company_address=#{companyAddress},</if>
+            <if test="status!=null">i.status=#{status},</if>
+            <if test="lastLoginTime!=null">i.last_login_time=#{lastLoginTime},</if>
+            <if test="remark!=null">i.remark=#{remark},</if>
+            <if test="idCardFrontImgUrl!=null">i.id_card_front_img_url=#{idCardFrontImgUrl},</if>
+            <if test="idCardBackImgUrl!=null">i.id_card_back_img_url=#{idCardBackImgUrl},</if>
+            <if test="companyLicenseImgUrl!=null">i.company_license_img_url=#{companyLicenseImgUrl},</if>
+        </set>
+        <where>
+            1=0
+            <if test="userId!=null">OR i.user_id=#{userId}</if>
+            <if test="phone!=null">OR i.phone=#{phone}</if>
+        </where>
+    </update>
+</mapper>

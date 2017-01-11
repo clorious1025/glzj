@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huayi.app.mapper.InspectorTeamMapper">
+    <sql id="pageSql">
+        <bind name="first" value="(page - 1) * size"/>
+        limit #{first},#{size}
+    </sql>
+    <insert id="add" parameterType="inspectorTeamAddQuery">
+        INSERT INTO t_inspector_team
+        (team_name)
+        VALUES (#{teamName})
+    </insert>
+    <resultMap id="teamMap" type="inspectorTeam">
+        <collection property="inspectorList" column="teamId" select="inspectorSelect"/>
+    </resultMap>
+    <select id="inspectorSelect" resultType="inspectorForTeamVo">
+        SELECT
+        i.inspector_id inspectorId,
+        i.real_name realName,
+        i.phone phone
+        FROM t_inspector i
+        WHERE
+        i.team_id=#{teamId}
+    </select>
+    <select id="list" resultMap="teamMap">
+        select
+        team_id teamId,
+        team_name teamName
+        FROM t_inspector_team
+    </select>
+    <delete id="delete" parameterType="int">
+        DELETE FROM t_inspector_team
+        WHERE team_id=#{teamId}
+    </delete>
+    <update id="addInspector" parameterType="teamAddInspectorQuery">
+        update t_inspector i
+        SET i.team_id=#{teamId}
+        WHERE i.inspector_id IN
+        <foreach collection="inspectorIds" open="(" close=")" separator="," item="inspectorId">
+            #{inspectorId}
+        </foreach>
+    </update>
+    <update id="deleteInspector" parameterType="teamDeleteInspectorQuery">
+        update t_inspector i
+        SET i.team_id=NUll
+        WHERE
+        i.team_id=#{teamId}
+        AND
+        i.inspector_id IN
+        <foreach collection="inspectorIds" open="(" close=")" separator="," item="inspectorId">
+            #{inspectorId}
+        </foreach>
+    </update>
+</mapper>

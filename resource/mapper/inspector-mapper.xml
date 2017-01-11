@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huayi.app.mapper.InspectorMapper">
+    <sql id="pageSql">
+        <bind name="first" value="(page - 1) * size"/>
+        limit #{first},#{size}
+    </sql>
+    <select id="login" parameterType="inspector" resultType="inspector" >
+        SELECT
+        i.inspector_id inspectorId,
+        i.id_card idCard,
+        i.inspector_card_id inspectorCardId,
+        i.head_img_url headImgUrl,
+        i.nick_name nickName,
+        i.phone phone,
+        i.real_name realName,
+        i.id_card_front_img_url idCardFrontImgUrl,
+        i.id_card_back_img_url idCardBackImgUrl,
+        i.inspector_card_img_url inspectorCardImgUrl
+        FROM t_inspector i
+        WHERE i.phone=#{phone}
+        AND i.password=#{password}
+    </select>
+    <select id="find" parameterType="inspectorFindQuery" resultType="inspector" >
+        SELECT
+        i.inspector_id inspectorId,
+        i.id_card idCard,
+        i.inspector_card_id inspectorCardId,
+        i.head_img_url headImgUrl,
+        i.nick_name nickName,
+        i.phone phone,
+        i.real_name realName,
+        i.id_card_front_img_url idCardFrontImgUrl,
+        i.id_card_back_img_url idCardBackImgUrl,
+        i.inspector_card_img_url inspectorCardImgUrl
+        FROM t_inspector i
+        <where>
+            1=1
+            <if test="inspectorId!=null">AND i.inspector_id=#{inspectorId}</if>
+            <if test="phone!=null">AND i.phone=#{phone}</if>
+            <if test="password!=null">AND i.password=#{password}</if>
+        </where>
+    </select>
+    <update id="update" parameterType="inspector" >
+        UPDATE t_inspector i
+        <set>
+            <if test="inspectorCardId!=null">i.inspector_card_id=#{inspectorCardId},</if>
+            <if test="idCard!=null">i.id_card=#{idCard},</if>
+            <if test="headImgUrl!=null">i.head_img_url=#{headImgUrl},</if>
+            <if test="nickName!=null">i.nick_name=#{nickName},</if>
+            <if test="realName!=null">i.real_name=#{realName},</if>
+            <if test="password!=null">i.password=#{password},</if>
+            <if test="phone!=null">i.phone=#{phone},</if>
+            <if test="status!=null">i.status=#{status},</if>
+            <if test="lastLoginTime!=null">i.last_login_time=#{lastLoginTime},</if>
+            <if test="remark!=null">i.remark=#{remark},</if>
+            <if test="idCardFrontImgUrl!=null">i.id_card_front_img_url=#{idCardFrontImgUrl},</if>
+            <if test="idCardBackImgUrl!=null">i.id_card_back_img_url=#{idCardBackImgUrl},</if>
+            <if test="inspectorCardImgUrl!=null">i.inspector_card_img_url=#{inspectorCardImgUrl},</if>
+        </set>
+        <where>
+            1=0
+            <if test="inspectorId!=null and inspectorId!=0">OR i.inspector_id=#{inspectorId}</if>
+            <if test="phone!=null">OR i.phone=#{phone}</if>
+        </where>
+    </update>
+</mapper>

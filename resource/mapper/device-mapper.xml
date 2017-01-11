@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huayi.app.mapper.DeviceMapper">
+    <sql id="pageSql">
+        <bind name="first" value="(page - 1) * size"/>
+        limit #{first},#{size}
+    </sql>
+    <insert id="add" parameterType="deviceAddQuery">
+        INSERT INTO t_device (
+            clazz_id,
+            user_id,
+            device_code,
+            use_unit,
+            project_name,
+            install_address,
+            install_height,
+            device_brand,
+            device_type,
+            device_img_url,
+            device_longitude,
+            device_latitude
+        )
+        VALUES (
+            #{clazzId},
+            #{userId},
+            #{deviceCode},
+            #{useUnit},
+            #{projectName},
+            #{installAddress},
+            #{installHeight},
+            #{deviceBrand},
+            #{deviceType},
+            #{deviceImgUrl},
+            #{deviceLongitude},
+            #{deviceLatitude}
+        )
+    </insert>
+    <update id="update" parameterType="device">
+        UPDATE t_device t
+        <set>
+            <if test="useUnit!=null">t.use_unit=#{useUnit},</if>
+            <if test="projectName!=null">t.project_name=#{projectName},</if>
+            <if test="installAddress!=null">t.install_address=#{installAddress},</if>
+            <if test="installHeight!=null">t.install_height=#{installHeight},</if>
+            <if test="deviceBrand!=null">t.device_brand=#{deviceBrand},</if>
+            <if test="deviceType!=null">t.device_type=#{deviceType},</if>
+            <if test="deviceImgUrl!=null">t.device_img_url=#{deviceImgUrl},</if>
+            <if test="deviceLongitude!=null">t.device_longitude=#{deviceLongitude},</if>
+            <if test="deviceLatitude!=null">t.device_latitude=#{deviceLatitude}</if>
+        </set>
+        WHERE t.device_id=#{deviceId}
+    </update>
+    <update id="delete" parameterType="list" >
+        UPDATE t_device t
+        SET t.status = 0
+        WHERE t.device_id IN 
+        <foreach collection="list" open="(" close=")" item="deviceId" separator=",">
+            #{deviceId}
+        </foreach>
+    </update>
+    <resultMap id="deviceDetailMap" type="deviceDetailVo">
+        <association property="deviceClazz" column="clazz_id" select="deviceClazzSelect"/>
+    </resultMap>
+    <select id="deviceClazzSelect" resultType="deviceClazz">
+        SELECT
+        clazz_id clazzId,
+        clazz_name clazzName,
+        clazz_acronym clazzAcronym,
+        remark
+        FROM t_device_clazz
+        WHERE clazz_id=#{clazz_id}
+    </select>
+    <select id="find" parameterType="deviceFindQuery" resultMap="deviceDetailMap">
+        SELECT
+            d.device_id deviceId,
+            d.device_code deviceCode,
+            d.clazz_id,
+            d.use_unit useUnit,
+            d.project_name projectName,
+            d.install_address installAddress,
+            d.install_height installHeight,
+            d.device_brand deviceBrand,
+            d.device_type deviceType,
+            d.device_img_url deviceImgUrl,
+            d.device_longitude deviceLongitude,
+            d.device_latitude deviceLatitude
+        FROM
+            t_device d
+        <where>
+            1=0
+            <if test="deviceId!=null">OR d.device_id =#{deviceId}</if>
+        </where>
+    </select>
+    <resultMap id="devicePageQueryMap" type="devicePageVo">
+        <association property="deviceClazz" column="clazz_id" select="deviceClazzSelect"/>
+    </resultMap>
+    <select id="list" parameterType="devicePageQuery" resultMap="devicePageQueryMap">
+        SELECT
+            d.device_id deviceId,
+            d.clazz_id,
+            d.use_unit useUnit,
+            d.project_name projectName,
+            d.install_address installAddress,
+            d.device_img_url deviceImgUrl,
+            d.device_longitude deviceLongitude,
+            d.device_latitude deviceLatitude
+        FROM
+            t_device d
+        WHERE
+            d.status = 1
+        <include refid="pageSql" />
+    </select>
+    <select id="count" parameterType="devicePageQuery" resultType="int">
+        SELECT
+            count(*)
+        FROM
+            t_device d
+        WHERE
+            d.status = 1
+    </select>
+</mapper>

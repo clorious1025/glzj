@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huayi.app.mapper.TaskMapper">
+    <sql id="pageSql">
+        <bind name="first" value="(page - 1) * size"/>
+        limit #{first},#{size}
+    </sql>
+    <insert id="submitApplication" parameterType="submitApplicationQuery" >
+        INSERT INTO t_task
+        (device_id,submitter_id,submit_time)
+        VALUES
+        <foreach collection="deviceIds" separator="," item="deviceId">
+            (#{deviceId},#{submitterId},NOW())
+        </foreach>
+    </insert>
+    <select id="getRecentByDeviceIds" parameterType="submitApplicationQuery" resultType="int">
+        SELECT count(*)
+        FROM t_task
+        WHERE
+        task_status=0
+        AND
+        device_id
+        IN
+        <foreach collection="deviceIds" open="(" close=")" separator="," item="deviceId">
+            #{deviceId}
+        </foreach>
+    </select>
+    <update id="update" parameterType="taskUpdateQuery">
+        UPDATE t_task t
+        <set>
+            <if test="paymentStatus!=null">payment_status=#{paymentStatus},</if>
+            <if test="publisherId!=null">publisher_id=#{publisherId},publish_time=NOW(),</if>
+            <if test="taskTeamId!=null">task_team_id=#{taskTeamId},</if>
+            <if test="taskStatus!=null">task_status=#{taskStatus},</if>
+            <if test="gistId!=null">gist_id=#{gistId},</if>
+        </set>
+        WHERE
+        t.task_id IN
+        <foreach collection="taskIds" open="(" close=")" separator="," item="taskId">
+            #{taskId}
+        </foreach>
+    </update>
+    <select id="findByIdSimple" resultType="taskSimpleVo">
+        SELECT
+        task_id taskId,
+        task_status taskStatus
+        FROM t_task
+        WHERE task_id=#{taskId}
+    </select>
+    <delete id="repeal" parameterType="taskRepealQuery">
+        DELETE
+        FROM t_task
+        WHERE task_id=#{taskId}
+    </delete>
+
+    <select id="listSimple" parameterType="taskListSimpleQuery" resultType="taskListSimpleVo">
+        SELECT
+        t.task_id taskId,
+        t.device_id deviceId,
+        d.device_img_url deviceImgUrl,
+        d.device_code deviceCode,
+        d.project_name projectName,
+        t.submit_time submitTime,
+        t.task_status taskStatus
+        FROM t_task t
+        LEFT JOIN t_device d
+        ON t.device_id=d.device_id
+        WHERE d.user_id=#{userId}
+        AND t.task_status!=3
+        ORDER BY t.submit_time DESC
+        <include refid="pageSql"/>
+
+    </select>
+    <select id="countByUserId" resultType="int">
+        SELECT COUNT(*)
+        FROM t_task t
+        LEFT JOIN t_device d
+        ON t.device_id=d.device_id
+        WHERE d.user_id=#{userId}
+        AND t.task_status!=3
+    </select>
+    <select id="listForInspector" parameterType="taskListForInspectorQuery" resultType="taskListForInspectorVo">
+        SELECT
+        t.task_id taskId,
+        d.install_address installAddress,
+        d.project_name projectName,
+        t.publish_time publishTime,
+        d.device_longitude deviceLongitude,
+        d.device_latitude deviceLatitude,
+        t.sign_distance signDistance,
+        t.task_status taskStatus
+        FROM t_task t
+        LEFT JOIN t_device d
+        ON t.device_id=d.device_id
+        LEFT JOIN t_inspector i
+        ON t.task_team_id=i.team_id
+        WHERE i.inspector_id=#{inspectorId}
+        AND t.task_status!=0
+        ORDER BY t.publish_time DESC
+        <include refid="pageSql"/>
+    </select>
+    <select id="countByInspectorId" resultType="int">
+        SELECT
+        count(*)
+        FROM t_task t
+        LEFT JOIN t_device d
+        ON t.device_id=d.device_id
+        LEFT JOIN t_inspector i
+        ON t.task_team_id=i.team_id
+        WHERE i.inspector_id=#{inspectorId}
+        AND t.task_status!=0
+    </select>
+    <select id="getDistance" resultType="decimal">
+        SELECT func_getDistance(#{currentLongitude},#{currentLatitude},#{deviceLongitude},#{deviceLatitude})
+        FROM dual
+    </select>
+    <select id="getSignDistanceByTaskId" resultType="int">
+        SELECT
+          t.sign_distance
+        FROM t_task t
+        WHERE t.task_id=#{taskId}
+    </select>
+    <select id="getDeviceByTaskId" resultType="device">
+        SELECT
+        d.device_longitude deviceLongitude,
+        d.device_latitude deviceLatitude
+        FROM t_task t
+        LEFT JOIN t_device d
+        ON  t.device_id = d.device_id
+        WHERE
+        t.task_id=#{taskId}
+    </select>
+    <insert id="copyItemToRecord">
+        INSERT INTO t_inspect_record (
+            task_id,
+            item_id,
+            record_result
+        ) SELECT
+            task_id,
+            item_id,
+            result_template
+        FROM
+            t_create4record c
+        WHERE
+            c.task_id = #{taskId}
+    </insert>
+</mapper>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huayi.app.mapper.CodeMapper">
+    <insert id="add" parameterType="code">
+        INSERT INTO t_code (
+          phone,code,create_time
+        )
+        VALUES (
+          #{phone},
+          #{code},
+          #{createTime}
+        )
+    </insert>
+    <update id="update" parameterType="code">
+        UPDATE t_code c
+        SET c.code=#{code},c.create_time=NOW()
+        WHERE c.phone=#{phone}
+    </update>
+    <select id="findByPhone" parameterType="string" resultType="code">
+        SELECT
+            c.code_id codeId,
+            c.code code,
+            c.phone phone,
+            c.create_time createTime
+        FROM
+            t_code c
+        <where>
+            c.phone=#{phone}
+        </where>
+    </select>
+</mapper>

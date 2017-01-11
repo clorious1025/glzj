@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration   
+    PUBLIC "-//mybatis.org//DTD Config 3.0//EN"  
+    "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+	<!-- <settings>
+		   <setting name="callSettersOnNulls" value="true" />
+	    </settings>
+    -->
+    
+	<typeAliases>
+		<typeAlias type="com.alibaba.fastjson.JSONObject" alias="json" />
+
+		<typeAlias type="com.huayi.app.query.DeviceAddQuery" alias="deviceAddQuery" />
+		<typeAlias type="com.huayi.app.query.DeviceFindQuery" alias="deviceFindQuery" />
+		<typeAlias type="com.huayi.app.query.DevicePageQuery" alias="devicePageQuery" />
+		<typeAlias type="com.huayi.app.domain.Device" alias="device" />
+		<typeAlias type="com.huayi.app.vo.DeviceDetailVo" alias="deviceDetailVo" />
+		<typeAlias type="com.huayi.app.vo.DevicePageVo" alias="devicePageVo" />
+		<typeAlias type="com.huayi.app.domain.DeviceClazz" alias="deviceClazz"/>
+
+		<typeAlias type="com.huayi.app.domain.Inspector" alias="inspector"/>
+		<typeAlias type="com.huayi.app.query.InspectorFindQuery" alias="inspectorFindQuery" />
+
+		<typeAlias type="com.huayi.app.domain.Code" alias="code" />
+
+		<typeAlias type="com.huayi.app.domain.User" alias="user" />
+		<typeAlias type="com.huayi.app.query.UserFindQuery" alias="userFindQuery"/>
+
+		<typeAlias type="com.huayi.app.domain.Role" alias="role" />
+
+		<typeAlias type="com.huayi.app.query.InspectorTeamAddQuery" alias="inspectorTeamAddQuery"/>
+
+		<typeAlias type="com.huayi.app.domain.Location" alias="location"/>
+		<typeAlias type="com.huayi.app.query.CityFindQuery" alias="cityFindQuery"/>
+
+		<typeAlias type="com.huayi.app.domain.InspectGist" alias="inspectGist" />
+		<typeAlias type="com.huayi.app.query.InspectGistFindQuery" alias="inspectGistFindQuery"/>
+
+		<typeAlias type="com.huayi.app.vo.InspectItemDetailVo" alias="inspectItemDetailVo" />
+		<typeAlias type="com.huayi.app.domain.InspectResult" alias="inspectResult" />
+
+		<typeAlias type="com.huayi.app.domain.DeviceClazz" alias="deviceClazz"/>
+
+		<typeAlias type="com.huayi.app.domain.InspectorTeam" alias="inspectorTeam" />
+		<typeAlias type="com.huayi.app.vo.InspectorForTeamVo" alias="inspectorForTeamVo"/>
+		<typeAlias type="com.huayi.app.query.TeamAddInspectorQuery" alias="teamAddInspectorQuery"/>
+		<typeAlias type="com.huayi.app.query.TeamDeleteInspectorQuery" alias="teamDeleteInspectorQuery"/>
+
+        <typeAlias type="com.huayi.app.query.SubmitApplicationQuery" alias="submitApplicationQuery"/>
+        <typeAlias type="com.huayi.app.query.TaskUpdateQuery" alias="taskUpdateQuery"/>
+		<typeAlias type="com.huayi.app.vo.TaskSimpleVo" alias="taskSimpleVo"/>
+		<typeAlias type="com.huayi.app.query.TaskRepealQuery" alias="taskRepealQuery"/>
+		<typeAlias type="com.huayi.app.query.TaskListSimpleQuery" alias="taskListSimpleQuery"/>
+		<typeAlias type="com.huayi.app.vo.TaskListSimpleVo" alias="taskListSimpleVo"/>
+		<typeAlias type="com.huayi.app.query.TaskListForInspectorQuery" alias="taskListForInspectorQuery"/>
+		<typeAlias type="com.huayi.app.vo.TaskListForInspectorVo" alias="taskListForInspectorVo"/>
+	</typeAliases>
+	
+</configuration>

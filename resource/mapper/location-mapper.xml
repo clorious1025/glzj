@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.huayi.app.mapper.LocationMapper">
+    <select id="getProvinceList" resultType="location">
+      SELECT
+        l.location_id locationId,
+        l.location_value locationValue,
+        l.location_acronym locationAcronym,
+        l.remark remark
+      FROM t_location l
+      WHERE l.location_level=1
+    </select>
+
+    <select id="getCityListByProvinceId" parameterType="cityFindQuery" resultType="location">
+        SELECT
+        l.location_id locationId,
+        l.location_value locationValue,
+        l.location_acronym locationAcronym,
+        l.remark remark
+        FROM t_location l
+        WHERE
+        l.location_level=2
+        AND
+        l.parent_id=#{provinceId}
+    </select>
+
+</mapper>
